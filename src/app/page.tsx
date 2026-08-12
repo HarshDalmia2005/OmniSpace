@@ -1,165 +1,180 @@
-import React from "react";
+"use client";
 
-export default function OmniSpaceDashboard() {
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Code2, ShieldAlert, Activity, BookOpen, Terminal, Sparkles, ChevronRight, Settings, Cpu } from "lucide-react";
+
+export default function OmniSpace() {
+  const [activeTab, setActiveTab] = useState("overview");
+
+  const navItems = [
+    { id: "overview", label: "System Overview", icon: Activity },
+    { id: "security", label: "Secret Scanner", icon: ShieldAlert },
+    { id: "network", label: "API Proxy", icon: Cpu },
+    { id: "docs", label: "Local Docs", icon: BookOpen },
+  ];
+
   return (
-    <div className="flex h-screen w-full bg-zinc-50 font-sans text-zinc-950 dark:bg-zinc-950 dark:text-zinc-50">
-      {/* Sidebar */}
-      <aside className="flex w-64 flex-col border-r border-zinc-200 bg-white px-4 py-6 dark:border-zinc-800 dark:bg-zinc-900">
-        <div className="mb-8 flex items-center gap-3 px-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-black text-white dark:bg-white dark:text-black">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
-              <polyline points="2 17 12 22 22 17"></polyline>
-              <polyline points="2 12 12 17 22 12"></polyline>
-            </svg>
+    <div className="flex h-screen w-full bg-[#0a0a0a] text-zinc-300 font-sans selection:bg-emerald-500/30 overflow-hidden">
+      {/* Background Gradients */}
+      <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[20%] -left-[10%] w-[50%] h-[50%] rounded-full bg-emerald-900/20 blur-[120px]" />
+        <div className="absolute top-[60%] -right-[10%] w-[40%] h-[40%] rounded-full bg-indigo-900/20 blur-[120px]" />
+      </div>
+
+      {/* Floating Sidebar */}
+      <aside className="relative z-10 flex w-72 flex-col bg-white/[0.02] border-r border-white/[0.05] p-6 backdrop-blur-xl">
+        <div className="flex items-center gap-3 mb-10">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-400 to-teal-600 shadow-[0_0_20px_rgba(52,211,153,0.3)] text-black">
+            <Terminal size={20} strokeWidth={2.5} />
           </div>
-          <span className="text-lg font-semibold tracking-tight">OmniSpace</span>
+          <div>
+            <h1 className="text-lg font-bold text-white tracking-wide">OmniSpace</h1>
+            <p className="text-xs text-zinc-500 font-mono tracking-wider uppercase">Local Engine</p>
+          </div>
         </div>
 
-        <nav className="flex flex-1 flex-col gap-1">
-          <NavItem active icon={<ActivityIcon />} label="Overview" />
-          <NavItem icon={<DatabaseIcon />} label="Database" />
-          <NavItem icon={<ShieldIcon />} label="Security" />
-          <NavItem icon={<ActivityIcon />} label="API Traffic" />
-          <NavItem icon={<BookIcon />} label="Local Docs" />
+        <nav className="flex flex-col gap-2 flex-1">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`group relative flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-all duration-300 ${
+                activeTab === item.id ? "text-white" : "text-zinc-500 hover:text-zinc-300"
+              }`}
+            >
+              {activeTab === item.id && (
+                <motion.div
+                  layoutId="active-nav"
+                  className="absolute inset-0 rounded-lg bg-white/[0.06] border border-white/[0.08]"
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )}
+              <item.icon size={18} className="relative z-10" />
+              <span className="relative z-10">{item.label}</span>
+              {activeTab === item.id && (
+                <motion.div 
+                  initial={{ opacity: 0, x: -5 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  className="ml-auto relative z-10"
+                >
+                  <ChevronRight size={16} className="text-emerald-400" />
+                </motion.div>
+              )}
+            </button>
+          ))}
         </nav>
-        
-        <div className="mt-auto px-2">
-          <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-4 dark:border-zinc-800 dark:bg-zinc-950/50">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-              </span>
-              <span className="text-sm font-medium text-zinc-700 dark:text-zinc-300">Workspace Active</span>
-            </div>
-            <p className="text-xs text-zinc-500">Local dev server is running.</p>
+
+        <div className="mt-auto p-4 rounded-xl bg-black/40 border border-white/[0.05]">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-mono text-zinc-500">SYSTEM STATUS</span>
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500"></span>
+            </span>
           </div>
+          <p className="text-sm text-white">All services optimal</p>
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex flex-1 flex-col overflow-y-auto">
-        <header className="flex items-center justify-between border-b border-zinc-200 bg-white/50 px-8 py-4 backdrop-blur-sm dark:border-zinc-800 dark:bg-zinc-950/50">
+      {/* Main Content Area */}
+      <main className="relative z-10 flex-1 flex flex-col p-10">
+        <header className="flex items-center justify-between mb-10">
           <div>
-            <h1 className="text-xl font-semibold tracking-tight">Dashboard</h1>
-            <p className="text-sm text-zinc-500">Welcome to your local control center.</p>
+            <h2 className="text-3xl font-light text-white tracking-tight">
+              {navItems.find(i => i.id === activeTab)?.label}
+            </h2>
+            <p className="text-zinc-500 mt-1 font-mono text-sm">C:\Users\harsh\Workspace\OmniSpace</p>
           </div>
-          <div className="flex gap-3">
-            <button className="rounded-md border border-zinc-200 bg-white px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900 dark:hover:bg-zinc-800">
-              Settings
-            </button>
-            <button className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-zinc-800 dark:bg-white dark:text-zinc-950 dark:hover:bg-zinc-200">
-              Start App
-            </button>
-          </div>
+          <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/[0.03] border border-white/[0.05] text-zinc-400 transition-colors hover:text-white hover:bg-white/[0.06]">
+            <Settings size={18} />
+          </button>
         </header>
 
-        <div className="p-8">
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {/* Status Cards */}
-            <StatusCard title="Dependencies" value="Up to date" status="good" />
-            <StatusCard title="Database" value="Running" status="good" />
-            <StatusCard title="Hardcoded Secrets" value="0 found" status="neutral" />
-            <StatusCard title="API Endpoints" value="12 Monitored" status="neutral" />
-          </div>
-
-          <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-              <h2 className="mb-4 text-lg font-semibold tracking-tight">Recent Activity</h2>
-              <div className="flex flex-col gap-4 text-sm">
-                <ActivityRow time="12s ago" message="Scanned for secrets in src/" />
-                <ActivityRow time="2m ago" message="Monitored GET /api/users" />
-                <ActivityRow time="5m ago" message="Started Postgres container" />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
+            transition={{ duration: 0.3 }}
+            className="flex-1"
+          >
+            {activeTab === "overview" && <OverviewTab />}
+            {activeTab !== "overview" && (
+              <div className="flex h-full items-center justify-center border border-dashed border-white/[0.1] rounded-2xl bg-white/[0.01]">
+                <div className="text-center">
+                  <Sparkles size={32} className="mx-auto mb-4 text-emerald-400/50" />
+                  <p className="text-zinc-400 font-mono text-sm">Module loading...</p>
+                </div>
               </div>
-            </div>
-            
-            <div className="rounded-xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-              <h2 className="mb-4 text-lg font-semibold tracking-tight">Quick Actions</h2>
-              <div className="flex flex-col gap-3">
-                <button className="flex w-full items-center justify-between rounded-lg border border-zinc-200 px-4 py-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50">
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100">Scan for Secrets</span>
-                  <span className="text-zinc-500">→</span>
-                </button>
-                <button className="flex w-full items-center justify-between rounded-lg border border-zinc-200 px-4 py-3 text-left transition-colors hover:bg-zinc-50 dark:border-zinc-800 dark:hover:bg-zinc-800/50">
-                  <span className="font-medium text-zinc-900 dark:text-zinc-100">Generate API Tests</span>
-                  <span className="text-zinc-500">→</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );
 }
 
-function NavItem({ active, icon, label }: { active?: boolean; icon: React.ReactNode; label: string }) {
+function OverviewTab() {
   return (
-    <a
-      href="#"
-      className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-        active 
-          ? "bg-zinc-100 text-zinc-900 dark:bg-zinc-800/50 dark:text-zinc-50" 
-          : "text-zinc-600 hover:bg-zinc-50 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-zinc-800/30 dark:hover:text-zinc-50"
-      }`}
+    <div className="grid grid-cols-3 gap-6 h-full">
+      {/* Action Center */}
+      <div className="col-span-2 flex flex-col gap-6">
+        <div className="grid grid-cols-2 gap-6">
+          <StatCard title="Active Containers" value="3" icon={<Terminal size={20} className="text-indigo-400" />} />
+          <StatCard title="Secrets Detected" value="0" status="good" icon={<ShieldAlert size={20} className="text-emerald-400" />} />
+        </div>
+        
+        <div className="flex-1 rounded-2xl border border-white/[0.08] bg-black/20 p-6 backdrop-blur-md">
+          <h3 className="text-sm font-semibold text-white tracking-wide uppercase mb-6">Real-Time Event Stream</h3>
+          <div className="flex flex-col gap-1 font-mono text-sm">
+            <LogLine time="16:42:01" msg="Workspace initialized successfully." type="info" />
+            <LogLine time="16:42:05" msg="Started Next.js development server on port 3000." type="success" />
+            <LogLine time="16:45:12" msg="Background secret scanner attached to file watcher." type="info" />
+            <LogLine time="16:50:33" msg="API proxy intercepting traffic on localhost:8080." type="warning" />
+          </div>
+        </div>
+      </div>
+
+      {/* Side Panel */}
+      <div className="col-span-1 rounded-2xl border border-white/[0.08] bg-gradient-to-b from-white/[0.03] to-transparent p-6">
+        <h3 className="text-sm font-semibold text-white tracking-wide uppercase mb-6 flex items-center gap-2">
+          <Code2 size={16} className="text-emerald-400" /> Auto-Generator
+        </h3>
+        <p className="text-sm text-zinc-400 mb-6 leading-relaxed">
+          OmniSpace is actively monitoring your workflow. When you interact with the UI, the engine will automatically generate Playwright tests based on network traffic.
+        </p>
+        <button className="w-full rounded-xl bg-white text-black py-3 px-4 font-semibold text-sm transition-all hover:bg-zinc-200 hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
+          Force Scan Project
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ title, value, status, icon }: any) {
+  return (
+    <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] p-6 transition-all hover:bg-white/[0.04]">
+      <div className="flex items-center justify-between mb-4">
+        <div className="p-2 rounded-lg bg-white/[0.05]">{icon}</div>
+      </div>
+      <p className="text-3xl font-light text-white mb-1">{value}</p>
+      <h3 className="text-sm font-mono text-zinc-500 uppercase">{title}</h3>
+    </div>
+  );
+}
+
+function LogLine({ time, msg, type }: any) {
+  const color = type === "success" ? "text-emerald-400" : type === "warning" ? "text-amber-400" : "text-zinc-500";
+  return (
+    <motion.div 
+      initial={{ opacity: 0, x: -10 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="flex gap-4 py-2 border-b border-white/[0.03] last:border-0"
     >
-      <div className="opacity-70">{icon}</div>
-      {label}
-    </a>
-  );
-}
-
-function StatusCard({ title, value, status }: { title: string; value: string; status: "good" | "neutral" | "bad" }) {
-  return (
-    <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-      <h3 className="text-sm font-medium text-zinc-500 dark:text-zinc-400">{title}</h3>
-      <p className="mt-2 text-2xl font-semibold tracking-tight">{value}</p>
-    </div>
-  );
-}
-
-function ActivityRow({ time, message }: { time: string; message: string }) {
-  return (
-    <div className="flex justify-between border-b border-zinc-100 pb-3 last:border-0 last:pb-0 dark:border-zinc-800">
-      <span className="text-zinc-700 dark:text-zinc-300">{message}</span>
-      <span className="text-zinc-400">{time}</span>
-    </div>
-  );
-}
-
-// Icons
-function ActivityIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-    </svg>
-  );
-}
-
-function DatabaseIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
-      <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
-      <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
-    </svg>
-  );
-}
-
-function ShieldIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-    </svg>
-  );
-}
-
-function BookIcon() {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-    </svg>
+      <span className={color}>[{time}]</span>
+      <span className="text-zinc-300">{msg}</span>
+    </motion.div>
   );
 }
